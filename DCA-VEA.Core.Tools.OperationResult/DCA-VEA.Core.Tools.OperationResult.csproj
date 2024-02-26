@@ -2,14 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DCA_VEA.Core.Tools.OperationResult</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Assignment1\" />
-    <Folder Include="Assignment2\" />
-    <Folder Include="Assignment3\" />
-  </ItemGroup>
 
 </Project>
