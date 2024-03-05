@@ -1,8 +1,8 @@
 # Completed Feature Status
 
-* [ ] ValueObject base
-* [ ] Entity base
-* [ ] Aggregate base
+* [X] ValueObject base
+* [X] Entity base
+* [X] Aggregate base
 
 ### Event Creator
 
