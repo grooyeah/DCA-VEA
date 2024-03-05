@@ -1,18 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>DCA_VEA.Core.Domain</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aggregates\Events\" />
-    <Folder Include="Aggregates\Guests\" />
-    <Folder Include="Aggregates\Locations\" />
-    <Folder Include="Common\Bases\" />
-    <Folder Include="Common\Values\" />
+    <ProjectReference Include="..\Tools\DCA-VEA.Core.Tools.OperationResult\DCA-VEA.Core.Tools.OperationResult.csproj" />
   </ItemGroup>
 
 </Project>

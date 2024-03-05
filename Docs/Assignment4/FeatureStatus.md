@@ -6,8 +6,11 @@
 
 ### Event Creator
 
-* [ ] UC1 - Event creator creates new event
-	* [ ] value - EventId
+* [ ] UC1 - Event creator creates new empty event
+	* [X] value - EventVEAId
+	* [X] value - EventVEA
+	* [X] value - TimeInterval
+	* [X] enum - EventVEAStatus
 	* [ ] S1
 	* [ ] S2
 	* [ ] S3
