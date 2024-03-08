@@ -9,7 +9,6 @@ namespace DCA_VEA.Core.Domain.Aggregates.Events
     internal enum EventVEAStatus
     {
         Draft,
-        Created,
         Active,
         Cancelled,
         Readied

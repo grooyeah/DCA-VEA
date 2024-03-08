@@ -8,7 +8,7 @@ namespace DCA_VEA.Core.Domain.Common.Values
         public DateTime Start { get; }
         public DateTime End { get; }
 
-        public TimeInterval(DateTime start, DateTime end)
+        private TimeInterval(DateTime start, DateTime end)
         {
             this.Start = start;
             this.End = end;

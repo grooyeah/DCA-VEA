@@ -21,6 +21,16 @@ namespace DCA_VEA.Core.Domain.Aggregates.Events
             yield return Value;
         }
 
+        public static EventVEAId FromString(string idString)
+        {
+            if (!Guid.TryParse(idString, out Guid id))
+            {
+                throw new ArgumentException("Invalid GUID string", nameof(idString));
+            }
+
+            return new EventVEAId(id);
+        }
+
         public static implicit operator Guid(EventVEAId userId) => userId.Value;
         public static implicit operator EventVEAId(Guid value) => new EventVEAId(value);
     }
