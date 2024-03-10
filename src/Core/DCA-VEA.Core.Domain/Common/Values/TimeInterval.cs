@@ -5,39 +5,52 @@ namespace DCA_VEA.Core.Domain.Common.Values
 {
     public class TimeInterval : ValueObject
     {
-        public DateTime Start { get; }
-        public DateTime End { get; }
+        public DateTime Start { get; private set; }
+        public DateTime End { get; private set; }
+        public TimeSpan Duration => End - Start;
 
-        private TimeInterval(DateTime start, DateTime end)
+        public TimeInterval(DateTime start, DateTime end)
         {
-            this.Start = start;
-            this.End = end;
+            Validate(start, end);
+            Start = start;
+            End = end;
         }
 
-        // Static factory method to create TimeInterval instances
-        public static Result<TimeInterval> Create(DateTime start, DateTime end)
+        private void Validate(DateTime start, DateTime end)
         {
-            if (end < start)
+            if (end <= start)
             {
-                return Result<TimeInterval>.Failure(new Error(1, "End date must be greater than or equal to start date")); //Should we use InvalidArgumentException instead?
+                throw new InvalidOperationException("End time must be after start time.");
             }
 
-            return Result<TimeInterval>.Success(new TimeInterval(start, end));
+            if (start.TimeOfDay < new TimeSpan(8, 0, 0) || (end.TimeOfDay > new TimeSpan(1, 0, 0) && start.Date == end.Date))
+            {
+                throw new InvalidOperationException("Event must start after 08:00 AM and end by 01:00 AM the next day at the latest.");
+            }
+
+            if ((end - start).TotalHours > 10)
+            {
+                throw new InvalidOperationException("Event duration must be 10 hours or less.");
+            }
+
+            if (start < DateTime.Now)
+            {
+                throw new InvalidOperationException("Event start time cannot be in the past.");
+            }
         }
 
-        //Values for checking equality
-        protected override IEnumerable<object> GetEqualityComponents() 
+        public void SetValue(DateTime start, DateTime end)
+        {
+            Validate(start, end);
+            Start = start;
+            End = end;
+        }
+
+
+        protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Start;
             yield return End;
         }
-
-        public override string ToString()
-        {
-            return $"Start: {Start}, End: {End}";
-        }
-
-        // Calculating duration
-        public TimeSpan Duration => End - Start;
     }
 }
