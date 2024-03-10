@@ -73,3 +73,9 @@
 	* [x] F2
 	* [x] F3
 	* [x] F4
+* [ ] UC9 - Event creator activates an event
+	* [ ] S1
+	* [x] S2
+	* [x] S3
+	* [ ] F1
+	* [x] F2

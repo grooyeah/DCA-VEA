@@ -168,7 +168,28 @@ namespace DCA_VEA.Core.Domain.Aggregates.Events
 
         public void Activate()
         {
-            Status.SetValue(EventStatuses.Active);
+            if(Status.Value == EventStatuses.Cancelled)
+            {
+                throw new InvalidOperationException("A cancelled event cannot be activated.");
+            }
+
+            if (Status.Value == EventStatuses.Ready)
+            {
+                Status.SetValue(EventStatuses.Active);
+            }
+
+            if(Status.Value == EventStatuses.Active)
+            {
+                return;
+            }
+
+            if (Status.Value == EventStatuses.Draft)
+            {
+                // S1 Validate title, description, times, visibility, maximum guests
+
+                // F1 if not validated, fail, throw exception
+                Status.SetValue(EventStatuses.Active);
+            }
         }
 
         public void Cancel()
