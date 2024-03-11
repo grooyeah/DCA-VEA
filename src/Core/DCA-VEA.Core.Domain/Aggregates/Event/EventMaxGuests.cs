@@ -12,7 +12,7 @@ namespace DCA_VEA.Core.Domain.Aggregates.Event
             Validate(Value);
         }
 
-        private void Validate(int value)
+        internal void Validate(int value)
         {
             if (value < 5 || value > 50)
             {

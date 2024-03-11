@@ -14,7 +14,7 @@ namespace DCA_VEA.Core.Domain.Aggregates.Event
             Validate(Value);
         }
 
-        private void Validate(string value)
+        internal void Validate(string value)
         {
             if(value.Length <= 0 && value.Length > 250)
             {

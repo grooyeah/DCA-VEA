@@ -67,15 +67,15 @@
 	* [x] F3
 	* [x] F4
 	* [x] F5
-* [ ] UC8 - Event creator readies event
-	* [ ] S1
-	* [ ] F1
+* [x] UC8 - Event creator readies event
+	* [x] S1
+	* [x] F1
 	* [x] F2
 	* [x] F3
 	* [x] F4
-* [ ] UC9 - Event creator activates an event
-	* [ ] S1
+* [x] UC9 - Event creator activates an event
+	* [x] S1
 	* [x] S2
 	* [x] S3
-	* [ ] F1
+	* [x] F1
 	* [x] F2

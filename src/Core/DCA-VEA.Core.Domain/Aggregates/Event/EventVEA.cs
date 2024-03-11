@@ -157,8 +157,25 @@ namespace DCA_VEA.Core.Domain.Aggregates.Events
                 return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "An event in the past cannot be readied."));
             }
 
-            Status.SetValue(EventStatuses.Ready);
-            return Result<bool>.Success(true);
+            if (Status.Value == EventStatuses.Draft)
+            {
+
+                try
+                {
+                    Title.Validate(Title.Value);
+                    Description.Validate(Description.Value);
+                    MaxGuests.Validate(MaxGuests.Value);
+
+                    Status.SetValue(EventStatuses.Ready);
+                    return Result<bool>.Success(true);
+                }
+                catch (Exception ex)
+                {
+                    return Result<bool>.Failure(new Error(ErrorCodes.ValidationFailed, ex.Message));
+                }
+            }
+
+            return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Could not process ready request."));
         }
 
         public Result<bool> Activate()
@@ -170,9 +187,27 @@ namespace DCA_VEA.Core.Domain.Aggregates.Events
 
             if (Status.Value != EventStatuses.Active)
             {
-                Status.SetValue(EventStatuses.Active);
-                return Result<bool>.Success(true);
+                if (Status.Value == EventStatuses.Draft)
+                {
+
+                    try
+                    {
+                        Title.Validate(Title.Value);
+                        Description.Validate(Description.Value);
+                        MaxGuests.Validate(MaxGuests.Value);
+
+                        Status.SetValue(EventStatuses.Active);
+                        return Result<bool>.Success(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        return Result<bool>.Failure(new Error(ErrorCodes.ValidationFailed, ex.Message));
+                    }
+                }
+
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Could not process activate request."));
             }
+
 
             return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Event is already active or not in a state that can be activated."));
         }
