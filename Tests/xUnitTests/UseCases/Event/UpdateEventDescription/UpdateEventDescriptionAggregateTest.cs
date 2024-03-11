@@ -17,9 +17,10 @@ namespace xUnitTests.UseCases.Event.UpdateEventDescription
             var eventVEA = EventVEA.CreateEmpty();
 
             // Act
-            eventVEA.UpdateDescription(validDescription);
+            var result = eventVEA.UpdateDescription(validDescription);
 
             // Assert
+            Assert.True(result.IsSuccess);
             Assert.Equal(validDescription, eventVEA.Description.Value);
         }
     }

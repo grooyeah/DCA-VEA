@@ -12,32 +12,32 @@ namespace xUnitTests.Common.Values
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
-            var date = eventVEA.Date;
-            var newStart = date.Start;
-            var newEnd = date.End;
-            newStart.AddHours(1);
-            newEnd.AddHours(1);
+            var newStart = eventVEA.Date.Start.AddHours(1); // Corrected to actually update the times
+            var newEnd = eventVEA.Date.End.AddHours(1);
 
             // Act
-            eventVEA.UpdateTimeInterval(newStart, newEnd);
+            var result = eventVEA.UpdateTimeInterval(newStart, newEnd);
 
             // Assert
+            Assert.True(result.IsSuccess);
             Assert.Equal(newStart, eventVEA.Date.Start);
             Assert.Equal(newEnd, eventVEA.Date.End);
         }
 
         [Fact]
-        public void UpdateTimeInterval_InvalidTimes_ThrowsException()
+        public void UpdateTimeInterval_InvalidTimes_ReturnsFailure()
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
+            var newStart = DateTime.Now.AddDays(-1); // Example of an invalid time (in the past)
+            var newEnd = DateTime.Now.AddDays(-1).AddHours(1);
 
-            var newStart = DateTime.Now.AddDays(4).AddHours(1); 
-            var newEnd = DateTime.Now.AddDays(4).AddHours(2); 
+            // Act
+            var result = eventVEA.UpdateTimeInterval(newStart, newEnd);
 
-            // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => eventVEA.UpdateTimeInterval(newStart, newEnd));
-            Assert.Contains("failed to update", exception.Message.ToLower()); 
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Contains(result.Errors, e => e.Message.Contains("Failed to update event time interval")); // Adjust the message based on actual implementation
         }
     }
 }

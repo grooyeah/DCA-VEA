@@ -2,6 +2,7 @@
 using DCA_VEA.Core.Domain.Aggregates.Location;
 using DCA_VEA.Core.Domain.Common.Bases;
 using DCA_VEA.Core.Domain.Common.Values;
+using DCA_VEA.Core.Tools.OperationResult;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("xUnitTests")]
@@ -51,180 +52,158 @@ namespace DCA_VEA.Core.Domain.Aggregates.Events
                 new TimeInterval(start, end), new EventMaxGuests(5), new EventStatus(EventStatuses.Draft), new EventType(EventTypes.Private), new LocationId(Guid.NewGuid()));
         }
 
-        public void UpdateTitle(string title)
+        public Result<bool> UpdateTitle(string title)
         {
-            if (Status.Value == EventStatuses.Cancelled || Status.Value == EventStatuses.Active)
-            {
-                throw new InvalidOperationException("Cannot update the title of a cancelled or active event.");
-            }
-
-            if(Status.Value == EventStatuses.Ready)
-            {
-                Status.SetValue(EventStatuses.Draft);
-            }
-
-            Title.SetValue(title);
-        }
-
-        public void UpdateDescription(string description)
-        {
-            if (Status.Value == EventStatuses.Cancelled || Status.Value == EventStatuses.Active)
-            {
-                throw new InvalidOperationException("Cannot update the description of a cancelled or active event.");
-            }
-
-            if(Status.Value == EventStatuses.Ready)
-            {
-                Status.SetValue(EventStatuses.Draft);
-            }
-
-            Description.SetValue(description);
-        }
-
-        public void UpdateTimeInterval(DateTime start, DateTime end)
-        {
-
-            if (Status.Value == EventStatuses.Active || Status.Value == EventStatuses.Cancelled)
-            {
-                throw new InvalidOperationException("Cannot update times for active or cancelled events.");
-            }
-
             try
             {
-                var newTimeInterval = new TimeInterval(start, end);
-                Date.SetValue(start, end); 
+                if (Status.Value == EventStatuses.Cancelled || Status.Value == EventStatuses.Active)
+                {
+                    return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Cannot update the title of a cancelled or active event."));
+                }
 
                 if (Status.Value == EventStatuses.Ready)
                 {
                     Status.SetValue(EventStatuses.Draft);
                 }
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"Failed to update event time interval: {ex.Message}");
-            }
-            Date.SetValue(start, end);
-        }
 
-        public void UpdateMaxGuests(int maxGuests)
-        {
-            if(Status.Value == EventStatuses.Active)
-            {
-                if(maxGuests <= MaxGuests.Value)
-                {
-                    throw new InvalidOperationException("The number of guests of an ACTIVE event cannot be reduced (can only be increased).");
-                }
+                Title.SetValue(title);
+                return Result<bool>.Success(true);
             }
-
-            if(Status.Value == EventStatuses.Cancelled)
-            { 
-                throw new InvalidOperationException("A cancelled event cannot be modified.");
-            }
-
-            if(maxGuests < 5)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Cannot set the number of guests lower than 5.");
-            }
-
-            if (maxGuests >= MaxGuests.Value)
-            {
-                MaxGuests.SetValue(maxGuests);
+                return Result<bool>.Failure(new Error(ErrorCodes.InternalServerError, ex.Message));
             }
         }
 
-        public void UpdateLocation(Guid locationId)
+        public Result<bool> UpdateDescription(string description)
         {
-            LocationId.SetValue(locationId);
-        }
-
-        public void Ready()
-        {
-            if(Status.Value == EventStatuses.Cancelled)
+            if (Status.Value == EventStatuses.Cancelled || Status.Value == EventStatuses.Active)
             {
-                throw new InvalidOperationException("A cancelled event cannot be readied.");
-            }
-
-            if(Title.Value.Equals("Working title"))
-            {
-                throw new InvalidOperationException("The tile must be updated from the default one.");
-            }
-
-            if(DateTime.Now > Date.Start || DateTime.Now > Date.End)
-            {
-                throw new InvalidOperationException("An event in the past cannot be readied.");
-            }
-
-            if (Status.Value == EventStatuses.Draft)
-            {
-                // S1 Validate title, description, times, visibility, maximum guests
-
-                // F1 if not validated, fail, throw exception
-
-                Status.SetValue(EventStatuses.Ready);
-            }
-
-
-        }
-
-        public void Activate()
-        {
-            if(Status.Value == EventStatuses.Cancelled)
-            {
-                throw new InvalidOperationException("A cancelled event cannot be activated.");
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Cannot update the description of a cancelled or active event."));
             }
 
             if (Status.Value == EventStatuses.Ready)
             {
-                Status.SetValue(EventStatuses.Active);
+                Status.SetValue(EventStatuses.Draft);
             }
 
-            if(Status.Value == EventStatuses.Active)
-            {
-                return;
-            }
-
-            if (Status.Value == EventStatuses.Draft)
-            {
-                // S1 Validate title, description, times, visibility, maximum guests
-
-                // F1 if not validated, fail, throw exception
-                Status.SetValue(EventStatuses.Active);
-            }
+            Description.SetValue(description);
+            return Result<bool>.Success(true);
         }
 
-        public void Cancel()
+        public Result<bool> UpdateTimeInterval(DateTime start, DateTime end)
         {
-            Status.SetValue(EventStatuses.Cancelled);
+            if (Status.Value == EventStatuses.Active || Status.Value == EventStatuses.Cancelled)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Cannot update times for active or cancelled events."));
+            }
+
+            try
+            {
+                Date.SetValue(start, end);
+                if (Status.Value == EventStatuses.Ready)
+                {
+                    Status.SetValue(EventStatuses.Draft);
+                }
+                return Result<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.InternalServerError, $"Failed to update event time interval: {ex.Message}"));
+            }
         }
 
+        public Result<bool> UpdateMaxGuests(int maxGuests)
+        {
+            if (maxGuests < 5)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Cannot set the number of guests lower than 5."));
+            }
 
-        public void MakePublic()
+            if (Status.Value == EventStatuses.Cancelled)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "A cancelled event cannot be modified."));
+            }
+
+            if (Status.Value == EventStatuses.Active && maxGuests <= MaxGuests.Value)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "The number of guests of an ACTIVE event cannot be reduced (can only be increased)."));
+            }
+
+            MaxGuests.SetValue(maxGuests);
+            return Result<bool>.Success(true);
+        }
+
+        public Result<bool> UpdateLocation(Guid locationId)
+        {
+            LocationId.SetValue(locationId);
+            return Result<bool>.Success(true);
+        }
+
+        public Result<bool> Ready()
         {
             if (Status.Value == EventStatuses.Cancelled)
             {
-                throw new InvalidOperationException("A cancelled event cannot be modified.");
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "A cancelled event cannot be readied."));
+            }
+
+            if (Title.Value.Equals("Working Title"))
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "The title must be updated from the default one."));
+            }
+
+            if (DateTime.Now > Date.Start || DateTime.Now > Date.End)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "An event in the past cannot be readied."));
+            }
+
+            Status.SetValue(EventStatuses.Ready);
+            return Result<bool>.Success(true);
+        }
+
+        public Result<bool> Activate()
+        {
+            if (Status.Value == EventStatuses.Cancelled)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "A cancelled event cannot be activated."));
+            }
+
+            if (Status.Value != EventStatuses.Active)
+            {
+                Status.SetValue(EventStatuses.Active);
+                return Result<bool>.Success(true);
+            }
+
+            return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Event is already active or not in a state that can be activated."));
+        }
+
+        public Result<bool> Cancel()
+        {
+            Status.SetValue(EventStatuses.Cancelled);
+            return Result<bool>.Success(true);
+        }
+
+
+        public Result<bool> MakePublic()
+        {
+            if (Status.Value == EventStatuses.Cancelled)
+            {
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "A cancelled event cannot be modified."));
             }
 
             EventType.SetValue(EventTypes.Public);
+            return Result<bool>.Success(true);
         }
 
-        public void MakePrivate()
+        public Result<bool> MakePrivate()
         {
-            if(EventType.Value == EventTypes.Private)
+            if (Status.Value == EventStatuses.Cancelled || Status.Value == EventStatuses.Active)
             {
-                return;
+                return Result<bool>.Failure(new Error(ErrorCodes.SpecificError, "Cannot make a cancelled or active event private."));
             }
 
-            if (Status.Value == EventStatuses.Active || Status.Value == EventStatuses.Cancelled)
-            {
-                throw new InvalidOperationException("A cancelled event cannot be modified.");
-            }
-
-            if(Status.Value == EventStatuses.Ready || Status.Value == EventStatuses.Draft)
-            {
-                EventType.SetValue(EventTypes.Private);
-                Status.SetValue(EventStatuses.Draft);
-            }
+            EventType.SetValue(EventTypes.Private);
+            return Result<bool>.Success(true);
         }
     }
 }

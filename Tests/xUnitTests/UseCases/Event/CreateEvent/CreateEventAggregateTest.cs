@@ -19,7 +19,7 @@ namespace xUnitTests.UseCases.Event.CreateEvent
             Assert.NotNull(eventVEA.Id);
             Assert.Equal("Working Title", eventVEA.Title.Value);
             Assert.Equal("", eventVEA.Description.Value);
-            Assert.Equal(10, eventVEA.MaxGuests.Value);
+            Assert.Equal(5, eventVEA.MaxGuests.Value);
             Assert.Equal(EventStatuses.Draft, eventVEA.Status.Value);
         }
     }

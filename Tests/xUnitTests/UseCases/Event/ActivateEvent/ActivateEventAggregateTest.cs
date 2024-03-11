@@ -16,9 +16,10 @@ namespace xUnitTests.UseCases.Event.ActivateEvent
             var eventVEA = EventVEA.CreateEmpty();
 
             // Act
-            eventVEA.Activate(); 
+            var result = eventVEA.Activate();
 
             // Assert
+            Assert.True(result.IsSuccess);
             Assert.Equal(EventStatuses.Active, eventVEA.Status.Value);
         }
     }

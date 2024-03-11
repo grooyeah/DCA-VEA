@@ -19,43 +19,53 @@ namespace xUnitTests.UseCases.Event.UpdateEventTitle
             var eventVEA = EventVEA.CreateEmpty();
 
             // Act
-            eventVEA.UpdateTitle(validTitle);
+            var result = eventVEA.UpdateTitle(validTitle);
 
             // Assert
+            Assert.True(result.IsSuccess);
             Assert.Equal(validTitle, eventVEA.Title.Value);
         }
 
         [Fact]
-        public void UpdateTitle_WithEmptyTitle_ShouldThrowException()
+        public void UpdateTitle_WithEmptyTitle_ReturnsFailureWithMessage()
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
 
-            // Act & Assert
-            var exception = Assert.Throws<Exception>(() => eventVEA.UpdateTitle(""));
-            Assert.Equal("Title cannot be null or empty.", exception.Message);
+            // Act
+            var result = eventVEA.UpdateTitle("");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Contains(result.Errors, e => e.Message == "Title cannot be null or empty.");
         }
 
         [Fact]
-        public void UpdateTitle_WithShortLengthTitle_ShouldThrowException()
+        public void UpdateTitle_WithShortLengthTitle_ReturnsFailureWithMessage()
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
 
-            // Act & Assert
-            var exception = Assert.Throws<Exception>(() => eventVEA.UpdateTitle("t"));
-            Assert.Equal("Title must be between 3 and 75 characters long.", exception.Message);
+            // Act
+            var result = eventVEA.UpdateTitle("t");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Contains(result.Errors, e => e.Message == "Title must be between 3 and 75 characters long.");
         }
 
         [Fact]
-        public void UpdateTitle_WithLongLengthTitle_ShouldThrowException()
+        public void UpdateTitle_WithLongLengthTitle_ReturnsFailureWithMessage()
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
 
-            // Act & Assert
-            var exception = Assert.Throws<Exception>(() => eventVEA.UpdateTitle("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\n"));
-            Assert.Equal("Title must be between 3 and 75 characters long.", exception.Message);
+            // Act
+            var result = eventVEA.UpdateTitle(new string('A', 76)); // Using 76 'A's for a too long title
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Contains(result.Errors, e => e.Message == "Title must be between 3 and 75 characters long.");
         }
     }
 }

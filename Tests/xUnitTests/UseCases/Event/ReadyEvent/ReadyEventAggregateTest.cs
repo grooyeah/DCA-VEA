@@ -10,15 +10,18 @@ namespace xUnitTests.UseCases.Event.ReadyEvent
     public class ReadyEventAggregateTest
     {
         [Fact]
-        public void ActivateEvent_MakesActive()
+        public void ReadyEvent_MakesReady()
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
+            eventVEA.UpdateTitle("Test title");
+            eventVEA.Activate();
 
             // Act
-            eventVEA.Ready();
+            var result = eventVEA.Ready();
 
             // Assert
+            Assert.True(result.IsSuccess);
             Assert.Equal(EventStatuses.Ready, eventVEA.Status.Value);
         }
     }
