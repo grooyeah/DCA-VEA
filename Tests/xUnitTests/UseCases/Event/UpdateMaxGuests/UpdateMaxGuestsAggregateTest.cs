@@ -13,7 +13,7 @@ namespace xUnitTests.UseCases.Event.UpdateMaxGuests
         public void SetMaximumGuests_WithinValidRange_UpdatesMaxGuests(int maxGuests)
         {
             // Arrange
-            var eventVEA = EventVEA.CreateEmpty(); // Assuming draft status by default
+            var eventVEA = EventVEA.CreateEmpty(); 
 
             // Act
             var result = eventVEA.UpdateMaxGuests(maxGuests);

@@ -61,7 +61,7 @@ namespace xUnitTests.UseCases.Event.UpdateEventTitle
             var eventVEA = EventVEA.CreateEmpty();
 
             // Act
-            var result = eventVEA.UpdateTitle(new string('A', 76)); // Using 76 'A's for a too long title
+            var result = eventVEA.UpdateTitle(new string('A', 76));
 
             // Assert
             Assert.False(result.IsSuccess);

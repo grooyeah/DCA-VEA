@@ -31,7 +31,7 @@ namespace xUnitTests.UseCases.Event.ChangeEventVisibility
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
-            eventVEA.Cancel(); // Updated to use the method that now sets status correctly and returns Result<bool>
+            eventVEA.Cancel(); 
 
             // Act
             var result = eventVEA.MakePublic();
@@ -54,7 +54,6 @@ namespace xUnitTests.UseCases.Event.ChangeEventVisibility
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(EventTypes.Private, eventVEA.EventType.Value);
-            // Check if the status is set back to draft, assuming the original status was Ready or Draft
             Assert.Equal(EventStatuses.Draft, eventVEA.Status.Value);
         }
 
@@ -63,7 +62,7 @@ namespace xUnitTests.UseCases.Event.ChangeEventVisibility
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
-            eventVEA.Activate(); // Assuming this successfully activates the event
+            eventVEA.Activate(); 
 
             // Act
             var result = eventVEA.MakePrivate();
