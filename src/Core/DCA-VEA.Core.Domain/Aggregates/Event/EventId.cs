@@ -1,24 +1,31 @@
 ﻿using DCA_VEA.Core.Domain.Common.Bases;
 using DCA_VEA.Core.Tools.OperationResult;
 
-namespace DCA_VEA.Core.Domain.Aggregates.Events
+
+namespace DCA_VEA.Core.Domain.Aggregates.Event
 {
-    public class EventId : ValueObject 
+    public class EventId : ValueObject
     {
         public Guid Value { get; }
 
         public EventId(Guid value)
         {
             Value = value;
-            Validate(Value);
         }
 
-        private void Validate(Guid value)
+        public static Result<EventId> Create(Guid value)
         {
-            if(value.CompareTo(Guid.Empty) == 0) 
+            return Validate(new EventId(value));
+        }
+
+        private static Result<EventId> Validate(EventId eventId)
+        {
+            if (eventId.Value.CompareTo(Guid.Empty) == 0)
             {
-                throw new Exception($"Cannot assign empty ID.{value}");
+                return Result<EventId>.Failure(new Error(ErrorCodes.SpecificError, $"Cannot assign empty ID.{eventId.Value}"));
             }
+
+            return new Result<EventId>(eventId);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

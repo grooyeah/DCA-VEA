@@ -1,36 +1,31 @@
 ﻿using DCA_VEA.Core.Domain.Common.Bases;
+using DCA_VEA.Core.Tools.OperationResult;
 
 namespace DCA_VEA.Core.Domain.Aggregates.Event
 {
     public class EventTitle : ValueObject
     {
-        public string Value { get; private set; }
+        public string? Value { get; }
 
         public EventTitle(string value)
         {
             Value = value;
-            Validate(Value);
         }
 
-        internal void Validate(string value)
+        public static Result<EventTitle> Create(string? title)
         {
-            if (string.IsNullOrEmpty(value))
+            return Validate(new EventTitle(title));
+        }
+
+        private static Result<EventTitle> Validate(EventTitle eventTitle)
+        {
+            if (eventTitle.Value.Length < 3 || eventTitle.Value.Length > 75 || string.IsNullOrWhiteSpace(eventTitle.Value))
             {
-                throw new Exception("Title cannot be null or empty.");
+              return Result<EventTitle>.Failure(new Error(ErrorCodes.SpecificError, "Title must be between 3 and 75 characters long."));
             }
 
-            if (value.Length < 3 || value.Length > 75)
-            {
-                throw new Exception("Title must be between 3 and 75 characters long.");
-            }
+            return Result<EventTitle>.Success(eventTitle);
         }
-
-        public void SetValue(string value)
-        {
-            Validate(value);
-            Value = value;
-        }
-
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

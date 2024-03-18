@@ -1,29 +1,30 @@
 ﻿using DCA_VEA.Core.Domain.Common.Bases;
+using DCA_VEA.Core.Tools.OperationResult;
 
 namespace DCA_VEA.Core.Domain.Aggregates.Event
 {
     public class EventMaxGuests : ValueObject
     {
-        public int Value { get; private set; }
+        public int Value { get; }
 
         public EventMaxGuests(int value)
         { 
             Value = value;
-            Validate(Value);
         }
 
-        internal void Validate(int value)
+        public static Result<EventMaxGuests> Create(int maxGuests)
         {
-            if (value < 5 || value > 50)
+            return Validate(new EventMaxGuests(maxGuests));
+        }
+
+        private static Result<EventMaxGuests> Validate(EventMaxGuests eventMaxGuests)
+        {
+            if (eventMaxGuests.Value < 5 || eventMaxGuests.Value > 50)
             {
-                throw new Exception("Cannot set the number of max guests that is not between 5 and 50.");
+                return Result<EventMaxGuests>.Failure(new Error(ErrorCodes.SpecificError,"Cannot set the number of max guests that is not between 5 and 50."));
             }
-        }
 
-        public void SetValue(int value)
-        {
-            Validate(value);
-            Value = value;
+            return new Result<EventMaxGuests>(eventMaxGuests);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

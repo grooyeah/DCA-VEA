@@ -62,6 +62,8 @@ namespace xUnitTests.UseCases.Event.ChangeEventVisibility
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
+            eventVEA.UpdateTitle("Valid Title");
+            eventVEA.UpdateDescription("Valid Description");
             eventVEA.Activate(); 
 
             // Act

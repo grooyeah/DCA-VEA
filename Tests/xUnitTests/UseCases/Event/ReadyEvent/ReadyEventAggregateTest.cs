@@ -14,7 +14,8 @@ namespace xUnitTests.UseCases.Event.ReadyEvent
         {
             // Arrange
             var eventVEA = EventVEA.CreateEmpty();
-            eventVEA.UpdateTitle("Test title");
+            eventVEA.UpdateTitle("Valid Title");
+            eventVEA.UpdateDescription("Valid Description");
 
             // Act
             var result = eventVEA.Ready();

@@ -79,3 +79,39 @@
 	* [x] S3
 	* [x] F1
 	* [x] F2
+* [ ] UC10 - Anonymous registers a new guest account
+	* [ ] S1
+	* [ ] F1
+	* [ ] F2
+	* [ ] F3
+	* [ ] F4
+	* [ ] F5
+	* [ ] F6
+	* [ ] F7
+* [ ] UC11 - Guest participates in public event
+	* [ ] S1
+	* [ ] F1
+	* [ ] F2
+	* [ ] F3
+	* [ ] F4
+	* [ ] F5
+* [ ] UC12 - Guest cancels event partipation
+	* [ ] S1
+	* [ ] S2
+	* [ ] F1
+* [ ] UC13 - Guest is invited to event
+	* [ ] S1
+	* [ ] F1
+	* [ ] F2
+* [ ] UC14 - Guest accepts invitation
+	* [ ] S1
+	* [ ] F1
+	* [ ] F2
+	* [ ] F3
+	* [ ] F4
+* [ ] UC15 - Guest declines invitation
+	* [ ] S1
+	* [ ] S2
+	* [ ] F1
+	* [ ] F2
+	* [ ] F3

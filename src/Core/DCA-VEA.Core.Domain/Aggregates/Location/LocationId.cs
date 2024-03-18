@@ -1,9 +1,5 @@
 ﻿using DCA_VEA.Core.Domain.Common.Bases;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DCA_VEA.Core.Tools.OperationResult;
 
 namespace DCA_VEA.Core.Domain.Aggregates.Location
 {
@@ -14,21 +10,21 @@ namespace DCA_VEA.Core.Domain.Aggregates.Location
         public LocationId(Guid value) 
         {
             Value = value;
-            Validate(value);
         }
 
-        private void Validate(Guid value)
+        public static Result<LocationId> Create(Guid value)
         {
-            if (value.CompareTo(Guid.Empty) == 0)
+            return Validate(new LocationId(value));
+        }
+
+        private static Result<LocationId> Validate(LocationId locationId)
+        {
+            if (locationId.Value.CompareTo(Guid.Empty) == 0)
             {
-                throw new Exception("Cannot assign empty ID.");
+                return Result<LocationId>.Failure(new Error(ErrorCodes.SpecificError, $"Cannot assign empty ID.{locationId.Value}"));
             }
-        }
 
-        public void SetValue(Guid value)
-        {
-            Validate(value);    
-            Value = value;
+            return new Result<LocationId>(locationId);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
